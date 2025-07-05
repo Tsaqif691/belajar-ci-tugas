@@ -28,36 +28,42 @@ class ApiController extends ResourceController
      *
      * @return ResponseInterface
      */
+public function index()
+{
+    $data = [
+        'results' => [],
+        'status' => ["code" => 401, "description" => "Unauthorized"]
+    ];
 
-    public function index()
-    {
-        $data = [
-            'results' => [],
-            'status' => ["code" => 401, "description" => "Unauthorized"]
-        ];
+    $headers = $this->request->headers();
+    array_walk($headers, function (&$value, $key) {
+        $value = $value->getValue();
+    });
 
-        $headers = $this->request->headers();
+    if (array_key_exists("Key", $headers) && $headers["Key"] == $this->apiKey) {
+        $penjualan = $this->transaction->findAll();
 
-        array_walk($headers, function (&$value, $key) {
-            $value = $value->getValue();
-        });
+        foreach ($penjualan as &$pj) {
+            $details = $this->transaction_detail
+                ->where('transaction_id', $pj['id'])
+                ->findAll();
 
-        if (array_key_exists("Key", $headers)) {
-            if ($headers["Key"] == $this->apiKey) {
-                $penjualan = $this->transaction->findAll();
-
-                foreach ($penjualan as &$pj) {
-                    $pj['details'] = $this->transaction_detail->where('transaction_id', $pj['id'])->findAll();
-                }
-
-                $data['status'] = ["code" => 200, "description" => "OK"];
-                $data['results'] = $penjualan;
-
+            $totalItem = 0;
+            foreach ($details as $detail) {
+                $totalItem += isset($detail['jumlah']) ? (int) $detail['jumlah'] : 0;
             }
+
+            $pj['details'] = $details;
+            $pj['total_item'] = $totalItem;
         }
 
-        return $this->respond($data);
+        $data['status'] = ["code" => 200, "description" => "OK"];
+        $data['results'] = $penjualan;
     }
+
+    return $this->respond($data);
+}
+
 
     /**
      * Return the properties of a resource object.

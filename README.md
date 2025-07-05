@@ -66,3 +66,26 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 - json (enabled by default - don't turn it off)
 - [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
 - [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+
+
+# Toko Online dengan Diskon Harian
+
+## Fitur
+- Manajemen diskon harian
+- Autentikasi pengguna
+- CRUD diskon
+- Diskon otomatis saat transaksi
+- Dashboard dengan jumlah item per transaksi
+
+## Instalasi
+1. Clone repository ini.
+2. Jalankan `composer install` untuk menginstal dependensi.
+3. Jalankan `php spark migrate` untuk membuat tabel di database.
+4. Jalankan `php spark db:seed DiscountSeeder` untuk mengisi data awal.
+
+## Struktur Proyek
+- `app/Controllers/` - Controller aplikasi
+- `app/Models/` - Model aplikasi
+- `app/Views/` - View aplikasi
+- `app/Database/Migrations/` - Migration database
+- `app/Database/Seeds/` - Seeder database
